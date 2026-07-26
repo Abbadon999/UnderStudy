@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>UnderStudy</AssemblyName>
+    <RootNamespace>UnderStudy</RootNamespace>
+    <Version>1.5.1.0</Version>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!-- Compile against ASF's runtime assemblies; the host provides them, so copy nothing. -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>Abbadon999</Authors>
+    <Company>$(Authors)</Company>
+    <Copyright>Copyright © $([System.DateTime]::UtcNow.Year) $(Company)</Copyright>
+    <Description>ArchiSteamFarm plugin: human-plausible game rotation, session/break scheduling and paced achievement unlocking.</Description>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/$(Authors)/UnderStudy</PackageProjectUrl>
+    <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="ArchiSteamFarm">
+      <HintPath>..\lib\ArchiSteamFarm.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="SteamKit2">
+      <HintPath>..\lib\SteamKit2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System.Composition.AttributedModel">
+      <HintPath>..\lib\System.Composition.AttributedModel.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="UnderStudy.Tests" />
+  </ItemGroup>
+
+</Project>

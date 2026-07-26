@@ -1,0 +1,11 @@
+bin/
+obj/
+*.user
+*.bak
+
+# ASF runtime assemblies used as compile references — download an ASF-generic release
+# and unpack it into lib/ (see README).
+lib/
+
+# Local copy of JustArchiNET/ASF-PluginTemplate, kept only for reference.
+template/

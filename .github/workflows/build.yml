@@ -1,0 +1,33 @@
+name: Build
+
+on: [push, pull_request]
+
+env:
+  ASF_VERSION: 6.3.7.0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Fetch ASF reference assemblies
+        run: |
+          curl -sL -o /tmp/asf.zip "https://github.com/JustArchiNET/ArchiSteamFarm/releases/download/${ASF_VERSION}/ASF-generic.zip"
+          unzip -q /tmp/asf.zip -d lib
+
+      - name: Build
+        run: dotnet build -c Release UnderStudy/UnderStudy.csproj
+
+      - name: Test
+        run: dotnet test UnderStudy.Tests/UnderStudy.Tests.csproj
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: UnderStudy
+          path: UnderStudy/bin/Release/net10.0/UnderStudy.dll
