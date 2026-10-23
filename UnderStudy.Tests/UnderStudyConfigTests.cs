@@ -48,6 +48,19 @@ public sealed class UnderStudyConfigTests {
 		Assert.Contains(warnings, w => w.Contains("FavoriteBias"));
 	}
 
+	[Theory]
+	[InlineData(-0.1)]
+	[InlineData(1.1)]
+	public void Validate_FallbackReunionChanceOutOfRange_WarnsAboutFallbackReunionChance(double chance) {
+		UnderStudyConfig config = new() {
+			FallbackReunionChance = chance
+		};
+
+		config.Validate(out List<string> warnings);
+
+		Assert.Contains(warnings, w => w.Contains("FallbackReunionChance"));
+	}
+
 	[Fact]
 	public void Validate_MaxConcurrentGamesOutOfRange_WarnsAboutMaxConcurrentGames() {
 		UnderStudyConfig config = new() {

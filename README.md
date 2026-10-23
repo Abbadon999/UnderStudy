@@ -37,12 +37,12 @@ achievements at a believable pace and in a believable order.
   sessions with occasional marathons), then goes online-idle for a few minutes before the next one.
 - **Per-game lifetime caps** — each game is played roughly as long as real players play it: the cap
   is derived from the median `playtime_forever` of ~100 recent Steam review authors
-  (`store.steampowered.com/appreviews`), with a per-game random jitter. Games with no data fall back
+  (`IUserReviewsService/GetAppReviews`), with a per-game random jitter. Games with no data fall back
   to a configurable default.
 - **Favorites** — the bot gets "into" one game and keeps coming back to it (`FavoriteBias`) until it
   gets bored (`FavoriteSwitchChance`) or exhausts the cap, then adopts a new favorite.
 - **Reunions** — occasionally replays a game that already reached its cap, like a human revisiting
-  an old title (`ReunionChance`).
+  an old title (`ReunionChance`, or `FallbackReunionChance` once the whole library is done).
 - **Human-like achievements** (requires [ASFAchievementManager](https://github.com/CatPoweredPlugins/ASFAchievementManager)) —
   unlocks happen mid-session at a random minute, most sessions produce zero or one. Each game rolls
   a personal completion target once (e.g. 25–75%, with a chance the bot "doesn't care" about a
@@ -75,6 +75,7 @@ Add a `UnderStudy` block to `config/<Bot>.json` (and remove `GamesPlayedWhileIdl
   "FavoriteBias": 0.7,          // chance a session continues the favorite game
   "FavoriteSwitchChance": 0.08, // chance per session to get bored of it
   "ReunionChance": 0.10,        // chance to revisit a finished game
+  "FallbackReunionChance": 0.25, // same, once every game reached its cap
   "FallbackMode": "IdleSingle", // Idle | IdleSingle | SecondPass | Stop
   "FallbackAppID": 730,
   "Achievements": {

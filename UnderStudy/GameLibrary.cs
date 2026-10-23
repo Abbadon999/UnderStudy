@@ -49,7 +49,7 @@ internal sealed class GameLibrary {
 		}
 
 		if (stale || (entry.PlaytimeMetric == null)) {
-			entry.PlaytimeMetric = await SteamReviewsClient.GetPlaytimeMinutes(app, Config.UseAverage).ConfigureAwait(false);
+			entry.PlaytimeMetric = await SteamReviewsClient.GetPlaytimeMinutes(app, Config.UseAverage).ConfigureAwait(false) ?? entry.PlaytimeMetric;
 			entry.SteamSpyFetchedUtc = DateTime.UtcNow;
 		}
 

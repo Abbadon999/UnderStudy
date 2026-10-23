@@ -35,6 +35,9 @@ internal sealed class UnderStudyConfig {
 	// extended, and achievements can still drop there.
 	public double ReunionChance { get; set; } = 0.10;
 
+	// Same, but used once every game has reached its cap and the bot is in fallback.
+	public double FallbackReunionChance { get; set; } = 0.25;
+
 	// Achievement pacing/unlocking — see AchievementsConfig; requires ASFAchievementManager.
 	public AchievementsConfig Achievements { get; set; } = new();
 
@@ -96,6 +99,10 @@ internal sealed class UnderStudyConfig {
 
 		if (ReunionChance is < 0 or > 1) {
 			warnings.Add($"ReunionChance must be 0..1 (got {ReunionChance}).");
+		}
+
+		if (FallbackReunionChance is < 0 or > 1) {
+			warnings.Add($"FallbackReunionChance must be 0..1 (got {FallbackReunionChance}).");
 		}
 
 		if ((Achievements.MinTargetPercent < 0) || (Achievements.MaxTargetPercent > 100) || (Achievements.MaxTargetPercent < Achievements.MinTargetPercent)) {

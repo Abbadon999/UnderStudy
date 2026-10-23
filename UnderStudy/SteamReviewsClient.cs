@@ -2,11 +2,7 @@ using ArchiSteamFarm.Helpers.Json;
 
 namespace UnderStudy;
 
-/// <summary>
-/// Estimates "how long other people play this game" from the median/mean playtime of the 100 most
-/// recent store reviews' authors. Replaces SteamSpy, whose median_forever/average_forever have
-/// been zeroed out since its 2018 profile-privacy change.
-/// </summary>
+/// <summary>Estimates how long other people play a game from the playtime of its 100 most recent reviewers.</summary>
 internal static class SteamReviewsClient {
 	// Below this many usable samples the estimate is noise; callers fall back to DefaultCapMinutes.
 	private const int MinSamples = 10;
@@ -19,7 +15,7 @@ internal static class SteamReviewsClient {
 
 	/// <summary>Estimated playtime metric (minutes) for the app, or null if there is not enough review data.</summary>
 	internal static async Task<int?> GetPlaytimeMinutes(uint appID, bool useAverage) {
-		Uri request = new($"https://store.steampowered.com/appreviews/{appID}?json=1&num_per_page=100&filter=recent&purchase_type=all&language=all");
+		Uri request = new($"https://api.steampowered.com/IUserReviewsService/GetAppReviews/v1/?appid={appID}&num_per_page=100&filter=1&purchase_type=all&language=all");
 
 		await RateLimiter.WaitAsync().ConfigureAwait(false);
 
@@ -38,12 +34,12 @@ internal static class SteamReviewsClient {
 			RateLimiter.Release();
 		}
 
-		if (string.IsNullOrEmpty(body)) {
-			return null;
-		}
+		return string.IsNullOrEmpty(body) ? null : ParsePlaytime(body, useAverage);
+	}
 
+	internal static int? ParsePlaytime(string body, bool useAverage) {
 		try {
-			List<ReviewEntry>? reviews = body.ToJsonObject<AppReviewsResponse>()?.Reviews;
+			List<ReviewEntry>? reviews = body.ToJsonObject<AppReviewsResponse>()?.Response?.Reviews;
 
 			if (reviews == null) {
 				return null;

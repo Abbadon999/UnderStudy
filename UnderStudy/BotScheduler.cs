@@ -164,7 +164,10 @@ internal sealed class BotScheduler : IDisposable {
 	private async Task StartSessionOrFallback() {
 		await Library.RefreshOwnedIfNeeded(force: State.Games.Count == 0).ConfigureAwait(false);
 
-		List<uint> picks = await Selector.PickFavoriteOrGames(Config.MaxConcurrentGames).ConfigureAwait(false);
+		bool libraryDone = State.Phase is SchedulerPhase.Fallback or SchedulerPhase.FallbackSingle or SchedulerPhase.Stopped;
+		double reunionChance = libraryDone ? Config.FallbackReunionChance : Config.ReunionChance;
+
+		List<uint> picks = await Selector.PickFavoriteOrGames(Config.MaxConcurrentGames, reunionChance).ConfigureAwait(false);
 
 		if (picks.Count == 0) {
 			await Fallback().ConfigureAwait(false);
@@ -184,7 +187,7 @@ internal sealed class BotScheduler : IDisposable {
 			}
 		}
 
-		int sessionLen = Math.Clamp(SessionMinutes(), 1, minRemaining);
+		int sessionLen = Math.Min(SessionMinutes(), Math.Max(minRemaining, Config.MinSessionMinutes));
 
 		await ApplyPlay(picks).ConfigureAwait(false);
 

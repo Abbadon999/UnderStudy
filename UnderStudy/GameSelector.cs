@@ -21,8 +21,8 @@ internal sealed class GameSelector {
 	/// Most sessions continue the current favorite; sometimes something else for variety;
 	/// occasionally the bot gets bored and a new favorite gets adopted afterwards.
 	/// </summary>
-	internal async Task<List<uint>> PickFavoriteOrGames(int count) {
-		if ((Config.ReunionChance > 0) && (Random.Shared.NextDouble() < Config.ReunionChance)) {
+	internal async Task<List<uint>> PickFavoriteOrGames(int count, double reunionChance) {
+		if ((reunionChance > 0) && (Random.Shared.NextDouble() < reunionChance)) {
 			List<uint> capped = [];
 
 			foreach ((uint app, GameEntry entry) in State.Games) {
@@ -39,6 +39,8 @@ internal sealed class GameSelector {
 			}
 		}
 
+		uint boredOf = 0;
+
 		if (State.FavoriteApp != 0) {
 			uint favorite = State.FavoriteApp;
 			bool viable = State.Games.ContainsKey(favorite) && Library.IsAllowed(favorite);
@@ -52,6 +54,7 @@ internal sealed class GameSelector {
 				State.FavoriteApp = 0;
 			} else if (Random.Shared.NextDouble() < Config.FavoriteSwitchChance) {
 				State.FavoriteApp = 0;
+				boredOf = favorite;
 				Log($"Got bored of {Library.Name(favorite)} ({favorite}) — looking for a new favorite.");
 			}
 		}
@@ -73,7 +76,7 @@ internal sealed class GameSelector {
 		List<uint> fresh = await SelectGames(count).ConfigureAwait(false);
 
 		// A successful non-favorite pick while no favorite is set crowns a new favorite.
-		if ((Config.FavoriteBias > 0) && (State.FavoriteApp == 0) && (fresh.Count > 0)) {
+		if ((Config.FavoriteBias > 0) && (State.FavoriteApp == 0) && (fresh.Count > 0) && (fresh[0] != boredOf)) {
 			State.FavoriteApp = fresh[0];
 			Log($"New favorite: {Library.Name(fresh[0])} ({fresh[0]}).");
 		}

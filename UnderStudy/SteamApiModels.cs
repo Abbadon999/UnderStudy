@@ -28,8 +28,13 @@ internal sealed class OwnedGameEntry {
 	public int PlaytimeForever { get; init; }
 }
 
-// https://store.steampowered.com/appreviews/{appid}
+// https://api.steampowered.com/IUserReviewsService/GetAppReviews/v1/
 internal sealed class AppReviewsResponse {
+	[JsonPropertyName("response")]
+	public AppReviewsResult? Response { get; init; }
+}
+
+internal sealed class AppReviewsResult {
 	[JsonPropertyName("reviews")]
 	public List<ReviewEntry>? Reviews { get; init; }
 }

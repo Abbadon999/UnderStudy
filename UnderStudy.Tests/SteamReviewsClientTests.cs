@@ -31,4 +31,24 @@ public sealed class SteamReviewsClientTests {
 		// (10 + 20 + 33) / 3 = 21 (integer division, matches Mean's implementation).
 		Assert.Equal(21, SteamReviewsClient.Mean(samples));
 	}
+
+	[Fact]
+	public void ParsePlaytime_GetAppReviewsResponse_ReturnsMedian() {
+		string reviews = string.Join(",", Enumerable.Range(1, 11).Select(i => "{\"author\":{\"playtime_forever\":" + (i * 10) + "}}"));
+		string body = "{\"response\":{\"query_summary\":{\"num_reviews\":11},\"reviews\":[" + reviews + "]}}";
+
+		Assert.Equal(60, SteamReviewsClient.ParsePlaytime(body, false));
+	}
+
+	[Fact]
+	public void ParsePlaytime_TooFewSamples_ReturnsNull() {
+		const string body = """{"response":{"reviews":[{"author":{"playtime_forever":30}}]}}""";
+
+		Assert.Null(SteamReviewsClient.ParsePlaytime(body, false));
+	}
+
+	[Fact]
+	public void ParsePlaytime_UnknownApp_ReturnsNull() {
+		Assert.Null(SteamReviewsClient.ParsePlaytime("""{"response":{}}""", false));
+	}
 }
